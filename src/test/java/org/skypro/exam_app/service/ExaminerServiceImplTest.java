@@ -23,7 +23,7 @@ class ExaminerServiceImplTest {
     private QuestionService questionService;
 
     @InjectMocks
-    private ExaminerService examinerService;
+    private ExaminerServiceImpl examinerService;
 
     @Test
     void returnsUniqueQuestionsWithRequestedSize() {
