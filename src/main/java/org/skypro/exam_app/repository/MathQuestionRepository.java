@@ -10,7 +10,7 @@ import java.util.LinkedHashSet;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-@Repository("mathQuestionRepository")
+@Repository
 public class MathQuestionRepository implements QuestionRepository {
 
     private final Set<Question> data = new LinkedHashSet<>();

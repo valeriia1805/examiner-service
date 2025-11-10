@@ -11,7 +11,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-@Service("javaQuestionService")
+@Service
 @RequiredArgsConstructor
 public class JavaQuestionService implements QuestionService {
 

@@ -1,51 +1,56 @@
 package org.skypro.exam_app.service;
 
-import lombok.RequiredArgsConstructor;
 import org.skypro.exam_app.domain.Question;
-import org.skypro.exam_app.repository.QuestionRepository;
+import org.skypro.exam_app.exception.MethodNotAllowedForMathException;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
-import java.util.NoSuchElementException;
 import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
-@Service("mathQuestionService")
-@RequiredArgsConstructor
+@Service
 public class MathQuestionService implements QuestionService {
 
-    private final QuestionRepository mathQuestionRepository;
     private final Random random = new Random();
 
     @Override
     public Question add(Question q) {
-        return mathQuestionRepository.add(q);
+        throw new MethodNotAllowedForMathException("add");
     }
 
     @Override
     public Question remove(Question q) {
-        return mathQuestionRepository.remove(q);
+        throw new MethodNotAllowedForMathException("remove");
     }
 
     @Override
     public Question find(String question, String answer) {
-        Question probe = new Question(question, answer);
-        return mathQuestionRepository.getAll().stream()
-                .filter(probe::equals)
-                .findFirst()
-                .orElseThrow(() -> new NoSuchElementException("Question not found"));
+        throw new MethodNotAllowedForMathException("find");
     }
 
     @Override
     public Collection<Question> getAll() {
-        return mathQuestionRepository.getAll();
+        throw new MethodNotAllowedForMathException("getAll");
     }
 
     @Override
     public Question getRandomQuestion() {
-        List<Question> list = new ArrayList<>(mathQuestionRepository.getAll());
-        if (list.isEmpty()) throw new NoSuchElementException("No questions available");
-        return list.get(random.nextInt(list.size()));
+        int a = ThreadLocalRandom.current().nextInt(1, 101);
+        int b = ThreadLocalRandom.current().nextInt(1, 101);
+        char[] ops = new char[]{'+', '-', '*', '/'};
+        char op = ops[random.nextInt(ops.length)];
+
+        int res = switch (op) {
+            case '+' -> a + b;
+            case '-' -> a - b;
+            case '*' -> a * b;
+            default -> {
+                b = Math.max(1, b);
+                res = a - (a % b);
+                a = res;
+                yield a / b;
+            }
+        };
+        return new Question(a + " " + op + " " + b, String.valueOf(res));
     }
 }
