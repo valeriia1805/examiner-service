@@ -11,27 +11,27 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Random;
 
-@Service("javaQuestionService")
+@Service("mathQuestionService")
 @RequiredArgsConstructor
-public class JavaQuestionService implements QuestionService {
+public class MathQuestionService implements QuestionService {
 
-    private final QuestionRepository javaQuestionRepository;
+    private final QuestionRepository mathQuestionRepository;
     private final Random random = new Random();
 
     @Override
     public Question add(Question q) {
-        return javaQuestionRepository.add(q);
+        return mathQuestionRepository.add(q);
     }
 
     @Override
     public Question remove(Question q) {
-        return javaQuestionRepository.remove(q);
+        return mathQuestionRepository.remove(q);
     }
 
     @Override
     public Question find(String question, String answer) {
         Question probe = new Question(question, answer);
-        return javaQuestionRepository.getAll().stream()
+        return mathQuestionRepository.getAll().stream()
                 .filter(probe::equals)
                 .findFirst()
                 .orElseThrow(() -> new NoSuchElementException("Question not found"));
@@ -39,12 +39,12 @@ public class JavaQuestionService implements QuestionService {
 
     @Override
     public Collection<Question> getAll() {
-        return javaQuestionRepository.getAll();
+        return mathQuestionRepository.getAll();
     }
 
     @Override
     public Question getRandomQuestion() {
-        List<Question> list = new ArrayList<>(javaQuestionRepository.getAll());
+        List<Question> list = new ArrayList<>(mathQuestionRepository.getAll());
         if (list.isEmpty()) throw new NoSuchElementException("No questions available");
         return list.get(random.nextInt(list.size()));
     }

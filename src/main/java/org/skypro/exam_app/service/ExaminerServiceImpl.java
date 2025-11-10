@@ -1,6 +1,6 @@
 package org.skypro.exam_app.service;
 
-
+import lombok.RequiredArgsConstructor;
 import org.skypro.exam_app.domain.Question;
 import org.skypro.exam_app.exception.InsufficientQuestionsException;
 import org.springframework.stereotype.Service;
@@ -10,19 +10,21 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ExaminerServiceImpl implements ExaminerService {
 
-    private final QuestionService questionService;
-
-    public ExaminerServiceImpl(QuestionService questionService) {
-        this.questionService = questionService;
-    }
+    private final List<QuestionService> sources;
 
     @Override
     public Collection<Question> getQuestions(int amount) {
-        List<Question> pool = new ArrayList<>(questionService.getAll());
+        List<Question> pool = sources.stream()
+                .flatMap(questionService -> questionService.getAll().stream())
+                .distinct()
+                .collect(Collectors.toCollection(ArrayList::new));
+
         if (amount < 0 || amount > pool.size()) {
             throw new InsufficientQuestionsException(amount, pool.size());
         }

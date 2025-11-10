@@ -2,6 +2,8 @@ package org.skypro.exam_app.service;
 
 import org.junit.jupiter.api.Test;
 import org.skypro.exam_app.domain.Question;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 
 import java.util.NoSuchElementException;
 
@@ -11,55 +13,54 @@ import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
+@SpringBootTest
 class JavaQuestionServiceTest {
+
+    @Autowired
+    private JavaQuestionService javaQuestionService;
 
     @Test
     void addGetAllUnique() {
-        JavaQuestionService svc = new JavaQuestionService();
-        int base = svc.getAll().size();
+        int base = javaQuestionService.getAll().size();
 
-        svc.add(new Question("Q1", "A1"));
-        svc.add(new Question("Q1", "A1"));
+        javaQuestionService.add(new Question("Q1", "A1"));
+        javaQuestionService.add(new Question("Q1", "A1"));
 
-        assertEquals(base + 1, svc.getAll().size());
-        assertTrue(svc.getAll().contains(new Question("Q1", "A1")));
+        assertEquals(base + 1, javaQuestionService.getAll().size());
+        assertTrue(javaQuestionService.getAll().contains(new Question("Q1", "A1")));
     }
 
     @Test
     void removeExistingAndFailOnMissing() {
-        JavaQuestionService svc = new JavaQuestionService();
         Question q = new Question("Q2", "A2");
-        svc.add(q);
+        javaQuestionService.add(q);
 
-        assertDoesNotThrow(() -> svc.remove(q));
+        assertDoesNotThrow(() -> javaQuestionService.remove(q));
         assertThrows(NoSuchElementException.class,
-                () -> svc.remove(q));
+                () -> javaQuestionService.remove(q));
     }
 
     @Test
     void findExactMatchOrThrow() {
-        JavaQuestionService svc = new JavaQuestionService();
         Question q = new Question("Q3", "A3");
-        svc.add(q);
+        javaQuestionService.add(q);
 
-        assertEquals(q, svc.find("Q3", "A3"));
+        assertEquals(q, javaQuestionService.find("Q3", "A3"));
         assertThrows(NoSuchElementException.class,
-                () -> svc.find("Q3", "WRONG"));
+                () -> javaQuestionService.find("Q3", "WRONG"));
     }
 
     @Test
     void getRandomQuestionNotEmpty() {
-        JavaQuestionService svc = new JavaQuestionService();
-        assertNotNull(svc.getRandomQuestion());
+        assertNotNull(javaQuestionService.getRandomQuestion());
     }
 
     @Test
     void getRandomQuestionThrowsOnEmpty() {
-        var svc = new JavaQuestionService();
-        while (!svc.getAll().isEmpty()) {
-            var question = svc.getAll().stream().findFirst().get();
-            svc.remove(question);
+        while (!javaQuestionService.getAll().isEmpty()) {
+            var question = javaQuestionService.getAll().stream().findFirst().get();
+            javaQuestionService.remove(question);
         }
-        assertThrows(NoSuchElementException.class, svc::getRandomQuestion);
+        assertThrows(NoSuchElementException.class, javaQuestionService::getRandomQuestion);
     }
 }
